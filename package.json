@@ -7,14 +7,16 @@
     "start": " node src/server.js",
     "test:unit": "jest --watchAll",
     "test:int": "jest --config jest.integration.config.js",
-    "ttest:e2e": "cypress open"
+    "test:e2e": "cypress open"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
     "cypress": "^14.3.3",

@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test API Users</title>
+    <style>
+        :root {
+            --primary-color: #6366F1;
+            --primary-hover: #4F46E5;
+            --secondary-color: #3730A3;
+            --accent-color: #8B5CF6;
+            --light-color: #F9FAFB;
+            --dark-color: #1F2937;
+            --success-color: #10B981;
+            --danger-color: #EF4444;
+            --warning-color: #F59E0B;
+            --info-color: #3B82F6;
+            --border-radius: 10px;
+            --box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background-color: #F3F4F6;
+            color: var(--dark-color);
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            margin: -20px -20px 30px -20px;
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+            box-shadow: var(--box-shadow);
+            position: relative;
+        }
+
+        .swagger-link {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: white;
+            color: var(--primary-color);
+            padding: 8px 15px;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+        }
+
+        .swagger-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.2);
+        }
+
+        .swagger-icon {
+            width: 20px;
+            height: 20px;
+            fill: var(--primary-color);
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+
+        h2 {
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            font-size: 1.7rem;
+            font-weight: 600;
+            position: relative;
+            padding-bottom: 8px;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: var(--accent-color);
+            border-radius: 3px;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: var(--transition);
+            margin-bottom: 15px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label {
+            font-weight: 500;
+            color: var(--secondary-color);
+            font-size: 0.95rem;
+        }
+
+        input {
+            padding: 12px 15px;
+            border: 1px solid #E5E7EB;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+            background-color: #F9FAFB;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+            background-color: white;
+        }
+
+        #users-list, #results {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: var(--light-color);
+            border-radius: var(--border-radius);
+            min-height: 100px;
+            border: 1px solid #E5E7EB;
+        }
+
+        .user-card {
+            background-color: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .user-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .user-info {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-id {
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 0.9rem;
+        }
+
+        .user-name {
+            color: var(--dark-color);
+            font-weight: 500;
+            font-size: 1.1rem;
+        }
+
+        .delete-btn {
+            background-color: var(--danger-color);
+            padding: 8px 15px;
+            font-size: 0.9rem;
+        }
+
+        .delete-btn:hover {
+            background-color: #DC2626;
+        }
+
+        pre {
+            white-space: pre-wrap;
+            background-color: #1F2937;
+            color: #F9FAFB;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+
+        .success-msg {
+            color: var(--success-color);
+            font-weight: 500;
+        }
+
+        .error-msg {
+            color: var(--danger-color);
+            font-weight: 500;
+        }
+
+        .swagger-links {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .api-docs-link {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .api-docs-link:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+
+            .section {
+                padding: 20px;
+            }
+
+            .swagger-links {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .swagger-link {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin: 5px auto;
+                display: inline-flex;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="page-header">
+        <h1>Test des API Users</h1>
+        <p>Interface pour tester les opérations CRUD sur les utilisateurs</p>
+        <div class="swagger-links">
+            <a href="http://localhost:3000/swagger-portal" class="swagger-link" target="_blank">
+                <svg class="swagger-icon" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M127.999,0 C58.6676,0 0,58.6676 0,127.999 C0,197.3324 58.6676,256 127.999,256 C197.3324,256 256,197.3324 256,127.999 C256,58.6676 197.3324,0 127.999,0 Z M127.999,30.0973 C180.9767,30.0973 222.9026,74.5445 222.9026,127.999 C222.9026,181.4536 180.9767,225.9026 127.999,225.9026 C75.0233,225.9026 30.0973,181.4536 30.0973,127.999 C30.0973,74.5445 75.0233,30.0973 127.999,30.0973 Z M73.4675,81.8316 C63.7251,81.8316 55.8335,89.7232 55.8335,99.4656 C55.8335,109.2081 63.7251,117.0996 73.4675,117.0996 C83.21,117.0996 91.1016,109.2081 91.1016,99.4656 C91.1016,89.7232 83.21,81.8316 73.4675,81.8316 Z M127.999,81.8316 C118.2566,81.8316 110.365,89.7232 110.365,99.4656 C110.365,109.2081 118.2566,117.0996 127.999,117.0996 C137.7415,117.0996 145.6331,109.2081 145.6331,99.4656 C145.6331,89.7232 137.7415,81.8316 127.999,81.8316 Z M182.5306,81.8316 C172.7882,81.8316 164.8966,89.7232 164.8966,99.4656 C164.8966,109.2081 172.7882,117.0996 182.5306,117.0996 C192.2731,117.0996 200.1647,109.2081 200.1647,99.4656 C200.1647,89.7232 192.2731,81.8316 182.5306,81.8316 Z M91.1016,145.6331 C91.1016,155.3755 83.21,163.2671 73.4675,163.2671 C63.7251,163.2671 55.8335,155.3755 55.8335,145.6331 C55.8335,135.8907 63.7251,127.999 73.4675,127.999 C83.21,127.999 91.1016,135.8907 91.1016,145.6331 Z M145.6331,145.6331 C145.6331,155.3755 137.7415,163.2671 127.999,163.2671 C118.2566,163.2671 110.365,155.3755 110.365,145.6331 C110.365,135.8907 118.2566,127.999 127.999,127.999 C137.7415,127.999 145.6331,135.8907 145.6331,145.6331 Z M200.1647,145.6331 C200.1647,155.3755 192.2731,163.2671 182.5306,163.2671 C172.7882,163.2671 164.8966,155.3755 164.8966,145.6331 C164.8966,135.8907 172.7882,127.999 182.5306,127.999 C192.2731,127.999 200.1647,135.8907 200.1647,145.6331 Z" fill="currentColor"></path>
+                </svg>
+                Portail Swagger
+            </a>
+            <a href="http://localhost:3000/api-docs" class="swagger-link api-docs-link" target="_blank">
+                Documentation API
+            </a>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="section">
+            <h2>Liste des utilisateurs</h2>
+            <button id="get-users">
+                Afficher les utilisateurs
+            </button>
+            <div id="users-list"></div>
+        </div>
+        
+        <div class="section">
+            <h2>Ajouter un utilisateur</h2>
+            <form id="add-user-form">
+                <div class="form-group">
+                    <label for="user-id">ID:</label>
+                    <input type="number" id="user-id" required placeholder="Entrez un ID unique">
+                </div>
+                <div class="form-group">
+                    <label for="user-name">Nom:</label>
+                    <input type="text" id="user-name" required placeholder="Entrez un nom d'utilisateur">
+                </div>
+                <button type="submit">Ajouter l'utilisateur</button>
+            </form>
+        </div>
+        
+        <div class="section">
+            <h2>Résultats</h2>
+            <div id="results">Aucune opération effectuée</div>
+        </div>
+    </div>
+
+    <script>
+        
+        function showResult(title, data) {
+            const resultsDiv = document.getElementById('results');
+            
+            
+            if (typeof data === 'string') {
+                if (data.includes('succès')) {
+                    resultsDiv.innerHTML = `<strong>${title}</strong>: <span class="success-msg">${data}</span>`;
+                } else {
+                    resultsDiv.innerHTML = `<strong>${title}</strong>: <span class="error-msg">${data}</span>`;
+                }
+            } else {
+                
+                resultsDiv.innerHTML = `<strong>${title}</strong>:<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            }
+        }
+        
+        // Récupérer les utilisateurs
+        document.getElementById('get-users').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/api/users');
+                const users = await response.json();
+                
+                showResult('GET /api/users', users);
+                
+                
+                const usersList = document.getElementById('users-list');
+                usersList.innerHTML = '';
+                
+                if (users.length === 0) {
+                    usersList.innerHTML = '<p>Aucun utilisateur trouvé</p>';
+                    return;
+                }
+                
+                users.forEach(user => {
+                    const initials = user.name.split(' ').map(n => n[0]).join('').toUpperCase();
+                    
+                    const userCard = document.createElement('div');
+                    userCard.className = 'user-card';
+                    userCard.innerHTML = `
+                        <div class="user-info">
+                            <div class="user-avatar">${initials}</div>
+                            <div class="user-details">
+                                <span class="user-id">ID: ${user.id}</span>
+                                <span class="user-name">${user.name}</span>
+                            </div>
+                        </div>
+                        <button class="delete-btn" data-id="${user.id}">Supprimer</button>
+                    `;
+                    usersList.appendChild(userCard);
+                });
+                
+                document.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.addEventListener('click', deleteUser);
+                });
+                
+            } catch (error) {
+                showResult('Erreur', error.message);
+            }
+        });
+        
+        // Ajouter un utilisateur
+        document.getElementById('add-user-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const userId = document.getElementById('user-id').value;
+            const userName = document.getElementById('user-name').value;
+            
+            try {
+                const response = await fetch('/api/users', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id: parseInt(userId),
+                        name: userName
+                    })
+                });
+                
+                const newUser = await response.json();
+                showResult('POST /api/users', newUser);
+                
+                
+                document.getElementById('get-users').click();
+                
+            
+                document.getElementById('add-user-form').reset();
+                
+            } catch (error) {
+                showResult('Erreur', error.message);
+            }
+        });
+        
+        // Supprimer un utilisateur
+        async function deleteUser(e) {
+            const userId = e.target.dataset.id;
+            
+            try {
+                const response = await fetch(`/api/users/${userId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.status === 204) {
+                    showResult('DELETE /api/users/' + userId, 'Utilisateur supprimé avec succès');
+                } else if (response.status === 404) {
+                    const error = await response.json();
+                    showResult('DELETE /api/users/' + userId, error);
+                }
+                
+               
+                document.getElementById('get-users').click();
+                
+            } catch (error) {
+                showResult('Erreur', error.message);
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('get-users').click();
+        });
+    </script>
+</body>
+</html> 
